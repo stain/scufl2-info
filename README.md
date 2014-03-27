@@ -16,12 +16,19 @@ with uuid `746....a19`.
     http://localhost:3000/workflowBundle/74674670-04d0-4832-9651-bfc3a2ec3a19/workflow/HelloWorld/processor/Hello%20there/out/fred
 
 returns almost-JSON-LD:
+
+    
     {
       "workflow": {
         "processor": {
-          "@id": "workflow/HelloWorld/processor/Hello%20there/",
+          "inputProcessorPort": {
+            "@id": "workflow/HelloWorld/processor/Hello/in/hello",
+            "@type": "InputProcessorPort",
+            "name": "hello"
+          },
+          "@id": "workflow/HelloWorld/processor/Hello/",
           "@type": "Processor",
-          "name": "Hello there"
+          "name": "Hello"
         },
         "@id": "workflow/HelloWorld/",
         "@type": "Workflow",
@@ -34,16 +41,32 @@ returns almost-JSON-LD:
       "@id": "http://ns.taverna.org.uk/2010/workflowBundle/74674670-04d0-4832-9651-bfc3a2ec3a19/",
       "@type": "WorkflowBundle"
     }
+    
 
+
+Which is equivalent to the RDF triples:
+
+    @base <http://ns.taverna.org.uk/2010/workflowBundle/74674670-04d0-4832-9651-bfc3a2ec3a19/> .
+    <> <http://ns.taverna.org.uk/2010/scufl2#workflow> <workflow/HelloWorld/> .
+    <> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ns.taverna.org.uk/2010/scufl2#WorkflowBundle> .
+    <workflow/HelloWorld/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ns.taverna.org.uk/2010/scufl2#Workflow> .
+    <workflow/HelloWorld/> <http://ns.taverna.org.uk/2010/scufl2#name> "HelloWorld" .
+    <workflow/HelloWorld/> <http://ns.taverna.org.uk/2010/scufl2#processor> <workflow/HelloWorld/processor/Hello/> .
+    <workflow/HelloWorld/processor/Hello/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ns.taverna.org.uk/2010/scufl2#Processor> .
+    <workflow/HelloWorld/processor/Hello/> <http://ns.taverna.org.uk/2010/scufl2#inputProcessorPort> <workflow/HelloWorld/processor/Hello/in/hello> .
+    <workflow/HelloWorld/processor/Hello/> <http://ns.taverna.org.uk/2010/scufl2#name> "Hello" .
+    <workflow/HelloWorld/processor/Hello/in/hello> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://ns.taverna.org.uk/2010/scufl2#InputProcessorPort> .
+    <workflow/HelloWorld/processor/Hello/in/hello> <http://ns.taverna.org.uk/2010/scufl2#name> "hello" .
+    
+This corresponds to what is defined inside the scufl2 workflow bundle.
 
 ## TODO
 
 - datalinks, control links, activities, profiles, configurations, dispatch layer
 - Other RDF formats: RDF/XML and Turtle
-- Search myExperiment by UUID to add @seeAlso
+- Search myExperiment by UUID to add @seeAlso 
 - wfdesc
 - pretty-print of JSON
-- Avoid \/ escaping in JSON
 
 
 ## Prerequisites
