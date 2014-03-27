@@ -49,7 +49,7 @@
             { "@id" (processor-port-uri uuid workflow processor inOrOut port)
               "@type" (case inOrOut 
                         :in :InputProcessorPort
-                        :out :OutputProcesorPort)
+                        :out :OutputProcessorPort)
               "name" port}))
 
 
