@@ -36,6 +36,11 @@
   (is (= (get port "@id") "workflow/HelloWorld/processor/hello/out/greeting"))
   (is (= (get port "@type") "OutputProcessorPort")))
 
+(defn test-iteration-strategy-stack [strategy]
+  (is (not (nil? strategy)))
+  (is (= (get strategy "@id") "workflow/HelloWorld/processor/hello/iterationstrategy/"))
+  (is (= (get strategy "@type") "IterationStrategyStack")))
+
 (deftest test-app
   (testing "main route"
     (let [response (app (request :get "/"))]
@@ -81,8 +86,16 @@
         (test-processor (get-in json ["workflow" "processor"]))
         (test-output-processor-port (get-in json ["workflow" "processor" "outputProcessorPort"])))))
 
-
+  (testing "iteration strategy"
+    (let [response (app (request :get "/workflowBundle/62eb2413-bfec-4947-9854-cbabc7ecbc32/workflow/HelloWorld/processor/hello/iterationstrategy/"))]
+      (is (= (:status response) 200))
+      (let [json (parse-string (:body response))]
+        (test-workflow-bundle json)
+        (test-workflow (get json "workflow"))
+        (test-processor (get-in json ["workflow" "processor"]))
+        (test-iteration-strategy-stack (get-in json ["workflow" "processor" "iterationStrategyStack"])))))
   
   (testing "not-found route"
     (let [response (app (request :get "/invalid"))]
       (is (= (:status response) 404)))))
+

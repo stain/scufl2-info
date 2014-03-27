@@ -18,6 +18,9 @@
 (defn processor-port-uri [uuid workflow processor inOrOut port]
   (str (processor-uri uuid workflow processor) (name inOrOut) "/" (codec/url-encode port)))
 
+(defn iterationstrategy-uri [uuid workflow processor]
+  (str (processor-uri uuid workflow processor) "iterationstrategy/"))
+
 (defn wfbundle-json [uuid]
   { "@context" {
                 "@base" (wfbundle-uri uuid)
@@ -52,6 +55,12 @@
                         :out :OutputProcessorPort)
               "name" port}))
 
+(defn iteration-stack [uuid workflow processor]
+  (assoc-in (processor-json uuid workflow processor)
+            [:workflow :processor :iterationStrategyStack]
+            { "@id" (iterationstrategy-uri uuid workflow processor)
+              "@type" :IterationStrategyStack }))
+
 
 (defroutes app-routes
   (GET "/" [] "Hello World")
@@ -66,6 +75,8 @@
        [uuid workflow processor port] {:body (processor-port-json uuid workflow processor :in port)}) 
   (GET "/workflowBundle/:uuid/workflow/:workflow/processor/:processor/out/:port" 
        [uuid workflow processor port] {:body (processor-port-json uuid workflow processor :out port)}) 
+  (GET "/workflowBundle/:uuid/workflow/:workflow/processor/:processor/iterationstrategy/" 
+       [uuid workflow processor] {:body (iteration-stack uuid workflow processor)})
   (route/resources "/")
   (route/not-found "Not Found"))
 
