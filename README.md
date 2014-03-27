@@ -4,18 +4,40 @@ Returns Linked Data information about a SCUFL2 URI
 
 The idea is that say
 
-	http://ns.taverna.org.uk/2010/workflowBundle/74674670-04d0-4832-9651-bfc3a2ec3a19/workflow/HelloWorld/processor/Hello/out/fred"
+    http://ns.taverna.org.uk/2010/workflowBundle/74674670-04d0-4832-9651-bfc3a2ec3a19/workflow/HelloWorld/processor/Hello/out/fred"
 
 will redirect to this service to "guess" the partial workflow structure
 expressed in the URI - e.g. that we're talking about an output port 
 "fred" in processor "Hello" in workflow "HelloWorld" in workflow bundle
 "746....a19".
 
-Currently returns almost-JSON-LD:
+## Example
 
-	http://localhost:3000/workflowBundle/74674670-04d0-4832-9651-bfc3a2ec3a19/workflow/HelloWorld/processor/Hello/out/fred
+    http://localhost:3000/workflowBundle/74674670-04d0-4832-9651-bfc3a2ec3a19/workflow/HelloWorld/processor/Hello/out/fred
 
-	{"workflow":{"processor":{"outputProcessorPort":{"@id":"http://ns.taverna.org.uk/2010/workflowBundle/74674670-04d0-4832-9651-bfc3a2ec3a19/workflow/HelloWorld/processor/Hello/out/fred","@type":"OutputProcesorPort","name":"fred"},"@id":"http://ns.taverna.org.uk/2010/workflowBundle/74674670-04d0-4832-9651-bfc3a2ec3a19/workflow/HelloWorld/processor/Hello/","@type":"Processor","name":"Hello"},"@id":"http://ns.taverna.org.uk/2010/workflowBundle/74674670-04d0-4832-9651-bfc3a2ec3a19/workflow/HelloWorld/","@type":"Workflow","name":"HelloWorld"},"@id":"http://ns.taverna.org.uk/2010/workflowBundle/74674670-04d0-4832-9651-bfc3a2ec3a19/","@type":"WorkflowBundle"}
+returns almost-JSON-LD:
+
+
+    {
+      "workflow": {
+        "processor": {
+          "outputProcessorPort": {
+            "@id": "http:\/\/ns.taverna.org.uk\/2010\/workflowBundle\/74674670-04d0-4832-9651-bfc3a2ec3a19\/workflow\/HelloWorld\/processor\/Hello\/out\/fred",
+            "@type": "OutputProcesorPort",
+            "name": "fred"
+          },
+          "@id": "http:\/\/ns.taverna.org.uk\/2010\/workflowBundle\/74674670-04d0-4832-9651-bfc3a2ec3a19\/workflow\/HelloWorld\/processor\/Hello\/",
+          "@type": "Processor",
+          "name": "Hello"
+        },
+        "@id": "http:\/\/ns.taverna.org.uk\/2010\/workflowBundle\/74674670-04d0-4832-9651-bfc3a2ec3a19\/workflow\/HelloWorld\/",
+        "@type": "Workflow",
+        "name": "HelloWorld"
+      },
+      "@id": "http:\/\/ns.taverna.org.uk\/2010\/workflowBundle\/74674670-04d0-4832-9651-bfc3a2ec3a19\/",
+      "@type": "WorkflowBundle"
+    }
+
 
 TODO: 
 - Make and declare JSON-LD context with scufl2 mapping
