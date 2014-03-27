@@ -9,7 +9,8 @@
   (str "http://ns.taverna.org.uk/2010/workflowBundle/" (codec/url-encode uuid) "/"))
 
 (defn workflow-uri [uuid workflow]
-  (str (wfbundle-uri uuid) "workflow/" (codec/url-encode workflow) "/"))
+  ; Relative URI from wfbundle, as we set @base
+  (str "workflow/" (codec/url-encode workflow) "/"))
 
 (defn processor-uri [uuid workflow processor]
   (str (workflow-uri uuid workflow) "processor/" (codec/url-encode processor) "/"))
@@ -18,8 +19,13 @@
   (str (processor-uri uuid workflow processor) (name inOrOut) "/" (codec/url-encode port)))
 
 (defn wfbundle-json [uuid]
-  { "@id" (wfbundle-uri uuid) 
-    "@type" "WorkflowBundle"})
+  { "@context" {
+                "@base" (wfbundle-uri uuid)
+                "@vocab" "http://ns.taverna.org.uk/2010/scufl2#"
+                }
+    ; Absolute URI here, because some people would be confused by "" or "."
+    "@id" (wfbundle-uri uuid) 
+    "@type" :WorkflowBundle})
 
 (defn workflow-json [uuid workflow]
   (assoc (wfbundle-json uuid)
