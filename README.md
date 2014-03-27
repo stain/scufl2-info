@@ -13,40 +13,37 @@ with uuid `746....a19`.
 
 ## Example
 
-    http://localhost:3000/workflowBundle/74674670-04d0-4832-9651-bfc3a2ec3a19/workflow/HelloWorld/processor/Hello/out/fred
+    http://localhost:3000/workflowBundle/74674670-04d0-4832-9651-bfc3a2ec3a19/workflow/HelloWorld/processor/Hello%20there/out/fred
 
 returns almost-JSON-LD:
-
-
     {
       "workflow": {
         "processor": {
-          "outputProcessorPort": {
-            "@id": "http:\/\/ns.taverna.org.uk\/2010\/workflowBundle\/74674670-04d0-4832-9651-bfc3a2ec3a19\/workflow\/HelloWorld\/processor\/Hello\/out\/fred",
-            "@type": "OutputProcesorPort",
-            "name": "fred"
-          },
-          "@id": "http:\/\/ns.taverna.org.uk\/2010\/workflowBundle\/74674670-04d0-4832-9651-bfc3a2ec3a19\/workflow\/HelloWorld\/processor\/Hello\/",
+          "@id": "workflow/HelloWorld/processor/Hello%20there/",
           "@type": "Processor",
-          "name": "Hello"
+          "name": "Hello there"
         },
-        "@id": "http:\/\/ns.taverna.org.uk\/2010\/workflowBundle\/74674670-04d0-4832-9651-bfc3a2ec3a19\/workflow\/HelloWorld\/",
+        "@id": "workflow/HelloWorld/",
         "@type": "Workflow",
         "name": "HelloWorld"
       },
-      "@id": "http:\/\/ns.taverna.org.uk\/2010\/workflowBundle\/74674670-04d0-4832-9651-bfc3a2ec3a19\/",
+      "@context": {
+        "@base": "http://ns.taverna.org.uk/2010/workflowBundle/74674670-04d0-4832-9651-bfc3a2ec3a19/",
+        "@vocab": "http://ns.taverna.org.uk/2010/scufl2#"
+      },
+      "@id": "http://ns.taverna.org.uk/2010/workflowBundle/74674670-04d0-4832-9651-bfc3a2ec3a19/",
       "@type": "WorkflowBundle"
     }
 
 
 ## TODO
 
-- Make and declare JSON-LD context with scufl2 mapping
 - datalinks, control links, activities, profiles, configurations, dispatch layer
 - Other RDF formats: RDF/XML and Turtle
 - Search myExperiment by UUID to add @seeAlso
 - wfdesc
 - pretty-print of JSON
+- Avoid \/ escaping in JSON
 
 
 ## Prerequisites
