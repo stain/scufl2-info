@@ -4,6 +4,18 @@
         cheshire.core 
         scufl2-info.handler))
 
+(defn test-workflow-bundle [wfbundle]
+    (is (= (get wfbundle "@id") "http://ns.taverna.org.uk/2010/workflowBundle/62eb2413-bfec-4947-9854-cbabc7ecbc32/" ))
+    (is (= (get wfbundle "@type") "WorkflowBundle"))
+    (is (contains? wfbundle "@context"))
+    (is (= (get-in wfbundle ["@context" "@vocab"]) "http://ns.taverna.org.uk/2010/scufl2#"))
+    (is (= (get-in wfbundle ["@context" "@base"]) "http://ns.taverna.org.uk/2010/workflowBundle/62eb2413-bfec-4947-9854-cbabc7ecbc32/")))
+
+(defn test-workflow [workflow]
+  (is (= (get workflow "name") "HelloWorld"))
+  (is (= (get workflow "@id") "workflow/HelloWorld/"))
+  (is (= (get workflow "@type") "Workflow")))
+
 (deftest test-app
   (testing "main route"
     (let [response (app (request :get "/"))]
@@ -14,11 +26,15 @@
     (let [response (app (request :get "/workflowBundle/62eb2413-bfec-4947-9854-cbabc7ecbc32/"))]
       (is (= (:status response) 200))
       (let [json (parse-string (:body response))]
-        (is (= (get json "@id") "http://ns.taverna.org.uk/2010/workflowBundle/62eb2413-bfec-4947-9854-cbabc7ecbc32/" ))
-        (is (= (get json "@type") "WorkflowBundle"))
-        (is (contains? json "@context"))
-        (is (= (get-in json ["@context" "@vocab"]) "http://ns.taverna.org.uk/2010/scufl2#"))
-        (is (= (get-in json ["@context" "@base"]) "http://ns.taverna.org.uk/2010/workflowBundle/62eb2413-bfec-4947-9854-cbabc7ecbc32/")))))
+        (test-workflow-bundle json))))
+
+  
+  (testing "workflow"
+    (let [response (app (request :get "/workflowBundle/62eb2413-bfec-4947-9854-cbabc7ecbc32/workflow/HelloWorld/"))]
+      (is (= (:status response) 200))
+      (let [json (parse-string (:body response))]
+        (test-workflow-bundle json)
+        (test-workflow (get json "workflow")))))
 
   
   (testing "not-found route"
