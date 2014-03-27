@@ -24,6 +24,18 @@
   (is (= (get processor "@id") "workflow/HelloWorld/processor/hello/"))
   (is (= (get processor "@type") "Processor")))
 
+(defn test-input-processor-port [port]
+  (is (not (nil? port)))
+  (is (= (get port "name") "name"))
+  (is (= (get port "@id") "workflow/HelloWorld/processor/hello/in/name"))
+  (is (= (get port "@type") "InputProcessorPort")))
+
+(defn test-output-processor-port [port]
+  (is (not (nil? port)))
+  (is (= (get port "name") "greeting"))
+  (is (= (get port "@id") "workflow/HelloWorld/processor/hello/out/greeting"))
+  (is (= (get port "@type") "OutputProcessorPort")))
+
 (deftest test-app
   (testing "main route"
     (let [response (app (request :get "/"))]
@@ -50,6 +62,25 @@
         (test-workflow-bundle json)
         (test-workflow (get json "workflow"))
         (test-processor (get-in json ["workflow" "processor"])))))
+
+  (testing "input processor port"
+    (let [response (app (request :get "/workflowBundle/62eb2413-bfec-4947-9854-cbabc7ecbc32/workflow/HelloWorld/processor/hello/in/name"))]
+      (is (= (:status response) 200))
+      (let [json (parse-string (:body response))]
+        (test-workflow-bundle json)
+        (test-workflow (get json "workflow"))
+        (test-processor (get-in json ["workflow" "processor"]))
+        (test-input-processor-port (get-in json ["workflow" "processor" "inputProcessorPort"])))))
+
+  (testing "output processor port"
+    (let [response (app (request :get "/workflowBundle/62eb2413-bfec-4947-9854-cbabc7ecbc32/workflow/HelloWorld/processor/hello/out/greeting"))]
+      (is (= (:status response) 200))
+      (let [json (parse-string (:body response))]
+        (test-workflow-bundle json)
+        (test-workflow (get json "workflow"))
+        (test-processor (get-in json ["workflow" "processor"]))
+        (test-output-processor-port (get-in json ["workflow" "processor" "outputProcessorPort"])))))
+
 
   
   (testing "not-found route"
