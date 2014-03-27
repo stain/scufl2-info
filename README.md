@@ -8,8 +8,8 @@ The idea is that say
 
 will redirect to this service to "guess" the partial workflow structure
 expressed in the URI - e.g. that we're talking about an output port 
-"fred" in processor "Hello" in workflow "HelloWorld" in workflow bundle
-"746....a19".
+`fred` in processor `Hello` in workflow `HelloWorld` in workflow bundle
+with uuid `746....a19`.
 
 ## Example
 
@@ -39,7 +39,8 @@ returns almost-JSON-LD:
     }
 
 
-TODO: 
+## TODO
+
 - Make and declare JSON-LD context with scufl2 mapping
 - datalinks, control links, activities, profiles, configurations, dispatch layer
 - Other RDF formats: RDF/XML and Turtle
