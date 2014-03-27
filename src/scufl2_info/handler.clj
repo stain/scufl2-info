@@ -56,7 +56,7 @@
 (defroutes app-routes
   (GET "/" [] "Hello World")
   ; TODO: Check that uuid is a valid uuid, else 404 on all below
-  (GET "/workflowBundle/:uuid" 
+  (GET "/workflowBundle/:uuid/" 
        [uuid] {:body (wfbundle-json uuid)})
   (GET "/workflowBundle/:uuid/workflow/:workflow/" 
        [uuid workflow] {:body (workflow-json uuid workflow)}) 
@@ -72,4 +72,4 @@
 (def app
   (-> 
     (handler/site app-routes)
-    (middleware/wrap-json-response)))
+    (middleware/wrap-json-response {:pretty true})))

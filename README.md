@@ -66,7 +66,6 @@ This corresponds to what is defined inside the scufl2 workflow bundle.
 - Other RDF formats: RDF/XML and Turtle
 - Search myExperiment by UUID to add @seeAlso 
 - wfdesc
-- pretty-print of JSON
 
 
 ## Prerequisites
