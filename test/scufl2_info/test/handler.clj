@@ -41,6 +41,13 @@
   (is (= (get strategy "@id") "workflow/HelloWorld/processor/hello/iterationstrategy/"))
   (is (= (get strategy "@type") "IterationStrategyStack")))
 
+(defn test-datalink [datalink]
+  (is (not (nil? datalink)))
+  (is (= (get datalink "@id") "workflow/HelloWorld/datalink?from=processor/hello/out/greeting&to=out/hello"))
+  (is (= (get datalink "@type") "DataLink"))
+  (is (= (get-in datalink ["receiveFrom" "@id"]) "workflow/HelloWorld/processor/hello/out/greeting"))
+  (is (= (get-in datalink ["sendTo" "@id"]) "workflow/HelloWorld/out/hello")))
+
 (deftest test-app
   (testing "main route"
     (let [response (app (request :get "/"))]
@@ -108,6 +115,14 @@
         (test-workflow (get json "workflow"))
         (test-processor (get-in json ["workflow" "processor"]))
         (test-iteration-strategy-stack (get-in json ["workflow" "processor" "iterationStrategyStack"])))))
+
+  (testing "datalink"
+    (let [response (app (request :get "/workflowBundle/62eb2413-bfec-4947-9854-cbabc7ecbc32/workflow/HelloWorld/datalink?from=processor/hello/out/greeting&to=out/hello"))]
+      (is (= (:status response) 200))
+      (let [json (parse-string (:body response))]
+        (test-workflow-bundle json)
+        (test-workflow (get json "workflow"))
+        (test-datalink (get-in json ["workflow" "datalink"])))))
   
   (testing "not-found route"
     (let [response (app (request :get "/invalid"))]

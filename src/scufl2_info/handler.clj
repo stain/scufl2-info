@@ -21,6 +21,9 @@
 (defn iterationstrategy-uri [uuid workflow processor]
   (str (processor-uri uuid workflow processor) "iterationstrategy/"))
 
+(defn datalink-uri [uuid workflow from to]
+  (str (workflow-uri uuid workflow) "datalink?from=" from "&to=" to))
+
 (defn wfbundle-json [uuid]
   { "@context" {
                 "@base" (wfbundle-uri uuid)
@@ -62,8 +65,16 @@
               "@type" :IterationStrategyStack }))
 
 (defn datalink-json [uuid workflow from to]
-  (str "Datalink " from " --> " to))
-
+  (assoc-in (workflow-json uuid workflow)
+            [:workflow :datalink]
+            { "@id" (datalink-uri uuid workflow from to)
+              "@type" :DataLink
+             ; TODO: support merge
+              :receiveFrom { "@id" (str (workflow-uri uuid workflow) from) }
+              :sendTo { "@id" (str (workflow-uri uuid workflow) to) } 
+             ; TODO: Should we also expand from and to here to show ports and
+             ; processors, or expect the client to simply follow the links?
+             }))
 
 (defn replace-second [coll new-second]
   (cons (first coll) 
