@@ -1,6 +1,7 @@
 # scufl2-info
 
-Returns Linked Data information about a SCUFL2 URI
+Returns Linked Data information about a [SCUFL2](http://dev.mygrid.org.uk/wiki/display/developer/SCUFL2) 
+resource.
 
 The idea is that say
 
@@ -15,7 +16,7 @@ with uuid `746....a19`.
 
     http://localhost:3000/workflowBundle/74674670-04d0-4832-9651-bfc3a2ec3a19/workflow/HelloWorld/processor/Hello%20there/out/fred
 
-returns almost-JSON-LD:
+returns [JSON-LD](http://json-ld.org/)):
 
     
     {
@@ -76,12 +77,17 @@ You will need [Leiningen][1] 1.7.0 or above installed.
 
 ## Running
 
-To start a web server for the application, run:
+To start a developer web server for the application, run:
 
     lein ring server
+
+To generate a WAR that can be installed into a servlet container like Apache Tomcat:
+
+    lein ring uberwar
 
 ## License
 
 Copyright © 2014 University of Manchester
 
 This software is licensed under the [MIT license](LICENSE.txt).
+
