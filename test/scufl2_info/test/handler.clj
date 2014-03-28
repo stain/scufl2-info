@@ -18,6 +18,18 @@
   (is (= (get workflow "@id") "workflow/HelloWorld/"))
   (is (= (get workflow "@type") "Workflow")))
 
+(defn test-input-workflow-port [port]
+  (is (not (nil? port)))
+  (is (= (get port "name") "name"))
+  (is (= (get port "@id") "workflow/HelloWorld/in/name"))
+  (is (= (get port "@type") "InputWorkflowPort")))
+
+(defn test-output-workflow-port [port]
+  (is (not (nil? port)))
+  (is (= (get port "name") "greeting"))
+  (is (= (get port "@id") "workflow/HelloWorld/out/greeting"))
+  (is (= (get port "@type") "OutputWorkflowPort")))
+
 (defn test-processor [processor]
   (is (not (nil? processor)))
   (is (= (get processor "name") "hello"))
@@ -29,6 +41,7 @@
   (is (= (get port "name") "name"))
   (is (= (get port "@id") "workflow/HelloWorld/processor/hello/in/name"))
   (is (= (get port "@type") "InputProcessorPort")))
+
 
 (defn test-output-processor-port [port]
   (is (not (nil? port)))
@@ -80,6 +93,22 @@
   (testing "workflow invalid uuid"
     (let [response (app (request :get "/workflowBundle/fred/workflow/HelloWorld/"))]
       (is (= (:status response) 400))))
+
+  (testing "input workflow port"
+    (let [response (app (request :get "/workflowBundle/62eb2413-bfec-4947-9854-cbabc7ecbc32/workflow/HelloWorld/in/name"))]
+      (is (= (:status response) 200))
+      (let [json (parse-string (:body response))]
+        (test-workflow-bundle json)
+        (test-workflow (get json "workflow"))
+        (test-input-workflow-port (get-in json ["workflow" "inputWorkflowPort"])))))
+
+  (testing "output workflow port"
+    (let [response (app (request :get "/workflowBundle/62eb2413-bfec-4947-9854-cbabc7ecbc32/workflow/HelloWorld/out/greeting"))]
+      (is (= (:status response) 200))
+      (let [json (parse-string (:body response))]
+        (test-workflow-bundle json)
+        (test-workflow (get json "workflow"))
+        (test-output-workflow-port (get-in json ["workflow" "outputWorkflowPort"])))))
 
   (testing "processor"
     (let [response (app (request :get "/workflowBundle/62eb2413-bfec-4947-9854-cbabc7ecbc32/workflow/HelloWorld/processor/hello/"))]
