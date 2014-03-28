@@ -18,6 +18,9 @@
 (defn processor-port-uri [uuid workflow processor inOrOut port]
   (str (processor-uri uuid workflow processor) (name inOrOut) "/" (codec/url-encode port)))
 
+(defn workflow-port-uri [uuid workflow inOrOut port]
+  (str (workflow-uri uuid workflow) (name inOrOut) "/" (codec/url-encode port)))
+
 (defn iterationstrategy-uri [uuid workflow processor]
   (str (processor-uri uuid workflow processor) "iterationstrategy/"))
 
@@ -27,6 +30,8 @@
 (defn wfbundle-json [uuid]
   { "@context" {
                 "@base" (wfbundle-uri uuid)
+                "rdfs" "http://www.w3.org/2000/01/rdf-schema#"
+                "seeAlso" "rdfs:seeAlso"
                 "@vocab" "http://ns.taverna.org.uk/2010/scufl2#"
                 }
     ; Absolute URI here, because some people would be confused by "" or "."
@@ -58,6 +63,17 @@
                         :out :OutputProcessorPort)
               "name" port}))
 
+(defn workflow-port-json [uuid workflow inOrOut port]
+  (assoc-in (workflow-json uuid workflow)
+            [:workflow (case inOrOut 
+                :in :inputWorkflowPort
+                :out :outputWorkflowPort)]
+            { "@id" (workflow-port-uri uuid workflow inOrOut port)
+              "@type" (case inOrOut 
+                        :in :InputWorkflowPort
+                        :out :OutputWorkflowPort)
+              "name" port}))
+
 (defn iteration-stack-json [uuid workflow processor]
   (assoc-in (processor-json uuid workflow processor)
             [:workflow :processor :iterationStrategyStack]
@@ -70,8 +86,12 @@
             { "@id" (datalink-uri uuid workflow from to)
               "@type" :DataLink
              ; TODO: support merge
-              :receiveFrom { "@id" (str (workflow-uri uuid workflow) from) }
-              :sendTo { "@id" (str (workflow-uri uuid workflow) to) } 
+              :receiveFrom { "@id" (str (workflow-uri uuid workflow) from)
+                             "@type" (if (.startsWith from "in/") :InputWorkflowPort :OutputProcessorPort)
+                            }
+              :sendTo { "@id" (str (workflow-uri uuid workflow) to) 
+                             "@type" (if (.startsWith to "out/") :OutputWorkflowPort :InputProcessorPort)
+                       } 
              ; TODO: Should we also expand from and to here to show ports and
              ; processors, or expect the client to simply follow the links?
              }))
@@ -94,6 +114,10 @@
        [uuid] (check-uuid (wfbundle-json uuid)))
   (GET "/workflowBundle/:uuid/workflow/:workflow/" 
        [uuid workflow] (check-uuid (workflow-json uuid workflow))) 
+  (GET "/workflowBundle/:uuid/workflow/:workflow/in/:port" 
+       [uuid workflow processor port] (check-uuid (workflow-port-json uuid workflow :in port)))
+  (GET "/workflowBundle/:uuid/workflow/:workflow/out/:port" 
+       [uuid workflow processor port] (check-uuid (workflow-port-json uuid workflow :out port)))
   (GET "/workflowBundle/:uuid/workflow/:workflow/processor/:processor/" 
        [uuid workflow processor] (check-uuid (processor-json uuid workflow processor)))
   (GET "/workflowBundle/:uuid/workflow/:workflow/processor/:processor/in/:port" 
