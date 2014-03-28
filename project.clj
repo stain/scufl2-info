@@ -1,4 +1,4 @@
-(defproject scufl2-info "0.1.0-SNAPSHOT"
+(defproject scufl2-info "0.1.0"
   :description "SCUFL2 information service"
   :url "https://github.com/stain/scufl2-info"
   :dependencies [[org.clojure/clojure "1.5.1"]
