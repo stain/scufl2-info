@@ -52,6 +52,16 @@
       (is (= (:status response) 200))
       (let [json (parse-string (:body response))]
         (test-workflow-bundle json))))
+
+  (testing "workflow bundle uppercase uuid"
+    (let [response (app (request :get "/workflowBundle/62EB2413-BFEC-4947-9854-CBABC7ECBC32/"))]
+      (is (= (:status response) 200))
+      (let [json (parse-string (:body response))]
+        (test-workflow-bundle json))))
+
+  (testing "workflow bundle invalid uuid"
+    (let [response (app (request :get "/workflowBundle/fred/"))]
+      (is (= (:status response) 400))))
   
   (testing "workflow"
     (let [response (app (request :get "/workflowBundle/62eb2413-bfec-4947-9854-cbabc7ecbc32/workflow/HelloWorld/"))]
@@ -59,6 +69,10 @@
       (let [json (parse-string (:body response))]
         (test-workflow-bundle json)
         (test-workflow (get json "workflow")))))
+
+  (testing "workflow invalid uuid"
+    (let [response (app (request :get "/workflowBundle/fred/workflow/HelloWorld/"))]
+      (is (= (:status response) 400))))
 
   (testing "processor"
     (let [response (app (request :get "/workflowBundle/62eb2413-bfec-4947-9854-cbabc7ecbc32/workflow/HelloWorld/processor/hello/"))]
