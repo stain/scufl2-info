@@ -62,9 +62,9 @@ This corresponds to what is defined inside the scufl2 workflow bundle.
 
 ## TODO
 
-- datalinks, control links, activities, profiles, configurations, dispatch layer
+- control links, activities, profiles, configurations, dispatch layer
 - Other RDF formats: RDF/XML and Turtle
-- Search myExperiment by UUID to add @seeAlso 
+- Search myExperiment by UUID to add rdfs:seeAlso 
 - wfdesc
 
 
