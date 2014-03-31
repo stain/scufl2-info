@@ -29,8 +29,7 @@
               Questions? Contact support@mygrid.org.uk
               ")
   ; TODO: Check that uuid is a valid uuid, else 404 on all below
-  (context "/workflowBundle/"
-    wfbundle/routes)
+  wfbundle/wfbundle-context
   (route/resources "/")
   (route/not-found "Not Found"))
 

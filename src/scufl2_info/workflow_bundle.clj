@@ -1,9 +1,11 @@
 (ns scufl2-info.workflow-bundle
   (:use compojure.core)
-  (:require [compojure.handler :as handler]
+  (:require
+            [compojure.handler :as handler]
             [ring.middleware.json :as middleware]
             [ring.util.codec :as codec]
-            [compojure.route :as route]))
+            [compojure.route :as route]
+            ))
 
 (defn wfbundle-uri [uuid]
   (str "http://ns.taverna.org.uk/2010/workflowBundle/" (codec/url-encode uuid) "/"))
@@ -107,7 +109,7 @@
     (catch IllegalArgumentException ~'e { :status 400 :body (str "Invalid workflow bundle UUID: " ~(second call))})))
 
 
-(defroute wfbundle-routes
+(def wfbundle-context (context "/workflowBundle/" []
   (GET "/" [] "
               <h1>scufl2-info wfbundles</h1>
               This is the <a href='https://github.com/stain/scufl2-info'>scufl2-info</a> web service.
@@ -129,27 +131,28 @@
               <p>
               Questions? Contact support@mygrid.org.uk
               ")
-  ; TODO: Check that uuid is a valid uuid, else 404 on all below
-  (GET "/:uuid/" 
-       [uuid] (check-uuid (wfbundle-json uuid)))
-  (GET "/:uuid/workflow/:workflow/" 
-       [uuid workflow] (check-uuid (workflow-json uuid workflow))) 
-  (GET "/:uuid/workflow/:workflow/in/:port" 
-       [uuid workflow processor port] (check-uuid (workflow-port-json uuid workflow :in port)))
-  (GET "/:uuid/workflow/:workflow/out/:port" 
-       [uuid workflow processor port] (check-uuid (workflow-port-json uuid workflow :out port)))
-  (GET "/:uuid/workflow/:workflow/processor/:processor/" 
-       [uuid workflow processor] (check-uuid (processor-json uuid workflow processor)))
-  (GET "/:uuid/workflow/:workflow/processor/:processor/in/:port" 
-       [uuid workflow processor port] (check-uuid (processor-port-json uuid workflow processor :in port)))
-  (GET "/:uuid/workflow/:workflow/processor/:processor/out/:port" 
-       [uuid workflow processor port] (check-uuid (processor-port-json uuid workflow processor :out port)))
-  (GET "/:uuid/workflow/:workflow/processor/:processor/iterationstrategy/" 
-       [uuid workflow processor] (check-uuid (iteration-stack-json uuid workflow processor)))
-  (GET "/:uuid/workflow/:workflow/datalink"
-       [uuid workflow from to] 
-       (if (or (nil? from) (nil? to))
-        { :status 404
-          :body "Not Found.\ndatalink requires query parameters 'from' and 'to'" } 
-       (check-uuid (datalink-json uuid workflow from to)))))
+  (context "/:uuid/" [uuid] 
+    ;; TODO: Check UUID here instead of using check-uuid macro?       
+    (GET "/" 
+        [uuid] (check-uuid (wfbundle-json uuid)))
+    (GET "/workflow/:workflow/" 
+        [workflow] (check-uuid (workflow-json uuid workflow))) 
+    (GET "/workflow/:workflow/in/:port" 
+        [workflow processor port] (check-uuid (workflow-port-json uuid workflow :in port)))
+    (GET "/workflow/:workflow/out/:port" 
+        [workflow processor port] (check-uuid (workflow-port-json uuid workflow :out port)))
+    (GET "/workflow/:workflow/processor/:processor/" 
+        [workflow processor] (check-uuid (processor-json uuid workflow processor)))
+    (GET "/workflow/:workflow/processor/:processor/in/:port" 
+        [workflow processor port] (check-uuid (processor-port-json uuid workflow processor :in port)))
+    (GET "/workflow/:workflow/processor/:processor/out/:port" 
+        [workflow processor port] (check-uuid (processor-port-json uuid workflow processor :out port)))
+    (GET "/workflow/:workflow/processor/:processor/iterationstrategy/" 
+        [workflow processor] (check-uuid (iteration-stack-json uuid workflow processor)))
+    (GET "/workflow/:workflow/datalink"
+        [workflow from to] 
+        (if (or (nil? from) (nil? to))
+          { :status 404
+            :body "Not Found.\ndatalink requires query parameters 'from' and 'to'" } 
+        (check-uuid (datalink-json uuid workflow from to)))))))
 
