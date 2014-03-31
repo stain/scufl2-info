@@ -3,6 +3,7 @@
   (:require
             [compojure.handler :as handler]
             [ring.middleware.json :as middleware]
+            [ring.util.response :as response]
             [ring.util.codec :as codec]
             [compojure.route :as route]
             ))
@@ -115,7 +116,7 @@
               This is the <a href='https://github.com/stain/scufl2-info'>scufl2-info</a> web service.
               <p>
               This service generates <a href='http://json-ld.org/'>JSON-LD</a> Linked Data descriptions for 
-              <a href='http://dev.mygrid.org.uk/wiki/display/developer/SCUFL2'>SCUFL2</a> <code>workflowBundle/</a>resources,
+              <a href='http://dev.mygrid.org.uk/wiki/display/developer/SCUFL2'>SCUFL2</a> <code>workflowBundle/</code>resources,
               following the same URI syntax as below the base
               <code>http://ns.taverna.org.uk/2010/workflowBundle/</code>
               <p>

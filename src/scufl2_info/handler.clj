@@ -4,6 +4,7 @@
             [compojure.handler :as handler]
             [ring.middleware.json :as middleware]
             [ring.util.codec :as codec]
+            [ring.util.response :as response]
             [compojure.route :as route]))
 
 (defroutes app-routes
@@ -29,6 +30,7 @@
               Questions? Contact support@mygrid.org.uk
               ")
   ; TODO: Check that uuid is a valid uuid, else 404 on all below
+  (GET "/workflowBundle" [] (response/redirect "/workflowBundle/"))
   wfbundle/wfbundle-context
   (route/resources "/")
   (route/not-found "Not Found"))
