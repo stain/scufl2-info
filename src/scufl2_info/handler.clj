@@ -1,6 +1,7 @@
 (ns scufl2-info.handler
   (:use compojure.core)
-  (:require [compojure.handler :as handler]
+  (:require [scufl2-info.workflow-bundle :as wfbundle]
+            [compojure.handler :as handler]
             [ring.middleware.json :as middleware]
             [ring.util.codec :as codec]
             [compojure.route :as route]))
@@ -28,8 +29,8 @@
               Questions? Contact support@mygrid.org.uk
               ")
   ; TODO: Check that uuid is a valid uuid, else 404 on all below
-  (GET "/workflowBundle/:uuid/" 
-       [uuid] (check-uuid (wfbundle-json uuid)))
+  (context "/workflowBundle/"
+    wfbundle/routes)
   (route/resources "/")
   (route/not-found "Not Found"))
 
