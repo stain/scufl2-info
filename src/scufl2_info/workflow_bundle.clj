@@ -109,9 +109,9 @@
     (catch IllegalArgumentException ~'e { :status 400 :body (str "Invalid workflow bundle UUID: " ~(second call))})))
 
 
-(def wfbundle-context (context "/workflowBundle/" []
+(def wfbundle-context (context "/workflowBundle" []
   (GET "/" [] "
-              <h1>scufl2-info wfbundles</h1>
+              <h1>scufl2-infoss wfbundles</h1>
               This is the <a href='https://github.com/stain/scufl2-info'>scufl2-info</a> web service.
               <p>
               This service generates <a href='http://json-ld.org/'>JSON-LD</a> Linked Data descriptions for 
@@ -131,7 +131,7 @@
               <p>
               Questions? Contact support@mygrid.org.uk
               ")
-  (context "/:uuid/" [uuid] 
+  (context "/:uuid" [uuid] 
     ;; TODO: Check UUID here instead of using check-uuid macro?       
     (GET "/" 
         [uuid] (check-uuid (wfbundle-json uuid)))
