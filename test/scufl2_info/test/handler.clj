@@ -95,6 +95,10 @@
       (let [json (parse-string (:body response))]
         (test-workflow-bundle json))))
 
+  (testing "workflow bundle not-found"
+    (let [response (app (request :get "/workflowBundle/745c1f72-d57b-45ee-a7cc-437358f91e45/other"))]
+      (is (= (:status response) 404))))
+
   (testing "workflow bundle uppercase uuid"
     (let [response (app (request :get "/workflowBundle/62EB2413-BFEC-4947-9854-CBABC7ECBC32/"))]
       (is (= (:status response) 200))
@@ -181,11 +185,39 @@
       (let [json (parse-string (:body response))]
         (test-workflow-run json))))
 
+  (testing "workflow run upper-case UUID"
+    (let [response (app (request :get "/run/745C1f72-D57B-45EE-A7CC-437358F91E45/"))]
+      (is (= (:status response) 200))
+      (let [json (parse-string (:body response))]
+        (test-workflow-run json))))
+
+  (testing "workflow run invalid uuid"
+    (let [response (app (request :get "/run/fred/"))]
+      (is (= (:status response) 400))))
+
   (testing "process run"
     (let [response (app (request :get "/run/745c1f72-d57b-45ee-a7cc-437358f91e45/process/ee12ac67-8cbc-440d-b3c0-b959257d154a/"))]
       (is (= (:status response) 200))
       (let [json (parse-string (:body response))]
         (test-process-run json))))
+
+  (testing "process run upper-case UUID"
+    (let [response (app (request :get "/run/745C1f72-D57B-45EE-A7CC-437358F91E45/process/EE12ac67-8CBC-440D-B3C0-B959257D154A/"))]
+      (is (= (:status response) 200))
+      (let [json (parse-string (:body response))]
+        (test-process-run json))))
+
+  (testing "process run invalid wf uuid"
+    (let [response (app (request :get "/run/fred/process/ee12ac67-8cbc-440d-b3c0-b959257d154a/"))]
+      (is (= (:status response) 400))))
+
+  (testing "process run invalid proc uuid"
+    (let [response (app (request :get "/run/745c1f72-d57b-45ee-a7cc-437358f91e45/process/soup/"))]
+      (is (= (:status response) 400))))
+
+  (testing "run not-found"
+    (let [response (app (request :get "/run/745c1f72-d57b-45ee-a7cc-437358f91e45/other"))]
+      (is (= (:status response) 404))))
   
   (testing "not-found route"
     (let [response (app (request :get "/invalid"))]
