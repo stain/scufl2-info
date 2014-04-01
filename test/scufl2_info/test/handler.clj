@@ -12,6 +12,28 @@
     (is (= (get-in wfbundle ["@context" "@vocab"]) "http://ns.taverna.org.uk/2010/scufl2#"))
     (is (= (get-in wfbundle ["@context" "@base"]) "http://ns.taverna.org.uk/2010/workflowBundle/62eb2413-bfec-4947-9854-cbabc7ecbc32/")))
 
+(defn test-workflow-run [run]
+    (is (not (nil? run)))
+    (is (= (get run "@id") "http://ns.taverna.org.uk/2011/run/745c1f72-d57b-45ee-a7cc-437358f91e45/" ))
+    (is (= (get run "@type") "WorkflowRun"))
+    (is (contains? run "wasEnactedBy"))
+    (is (= (get-in run ["wasEnactedBy" "@type"]) "tavernaprov:TavernaEngine" ))
+    (is (contains? run "@context"))
+    (is (= (get-in run ["@context" "@vocab"]) "http://purl.org/wf4ever/wfprov#"))
+    (is (= (get-in run ["@context" "tavernaprov"]) "http://ns.taverna.org.uk/2012/tavernaprov/"))
+    (is (= (get-in run ["@context" "@base"]) "http://ns.taverna.org.uk/2011/run/745c1f72-d57b-45ee-a7cc-437358f91e45/")))
+
+(defn test-process-run [run]
+    (is (not (nil? run)))
+    (is (= (get run "@id") "process/ee12ac67-8cbc-440d-b3c0-b959257d154a/" ))
+    (is (= (get run "@type") "ProcessRun"))
+    (is (contains? run "wasEnactedBy"))
+    (is (= (get-in run ["wasEnactedBy" "@type"]) "tavernaprov:TavernaEngine" ))
+    (is (contains? run "@context"))
+    (is (= (get-in run ["@context" "@vocab"]) "http://purl.org/wf4ever/wfprov#"))
+    (is (= (get-in run ["@context" "tavernaprov"]) "http://ns.taverna.org.uk/2012/tavernaprov/"))
+    (is (= (get-in run ["@context" "@base"]) "http://ns.taverna.org.uk/2011/run/745c1f72-d57b-45ee-a7cc-437358f91e45/")))
+
 (defn test-workflow [workflow]
   (is (not (nil? workflow)))
   (is (= (get workflow "name") "HelloWorld"))
@@ -152,6 +174,18 @@
         (test-workflow-bundle json)
         (test-workflow (get json "workflow"))
         (test-datalink (get-in json ["workflow" "datalink"])))))
+
+  (testing "workflow run"
+    (let [response (app (request :get "/run/745c1f72-d57b-45ee-a7cc-437358f91e45/"))]
+      (is (= (:status response) 200))
+      (let [json (parse-string (:body response))]
+        (test-workflow-run json))))
+
+  (testing "process run"
+    (let [response (app (request :get "/run/745c1f72-d57b-45ee-a7cc-437358f91e45/process/ee12ac67-8cbc-440d-b3c0-b959257d154a/"))]
+      (is (= (:status response) 200))
+      (let [json (parse-string (:body response))]
+        (test-process-run json))))
   
   (testing "not-found route"
     (let [response (app (request :get "/invalid"))]
