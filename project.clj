@@ -7,8 +7,6 @@
                  ;; transitively!!
                  [org.clojure/tools.reader "0.7.3"]
                  [commons-fileupload/commons-fileupload "1.3"]
-                 ;; Temporary for offline-use - upgrade commons-io
-                 [commons-io/commons-io "2.4"]
                  [ring/ring-json "0.3.0"]
                  [compojure "1.1.6"]]
   :plugins [[lein-ring "0.8.10"]]
