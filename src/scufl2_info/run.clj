@@ -50,7 +50,8 @@
     ; Absolute URI here, because some people would be confused by "" or "."
     "@id" (run-uri run) 
     "@type" :WorkflowRun
-    "wasEnactedBy" { "@type" "tavernaprov:TavernaEngine" }
+    "wasEnactedBy" { "@id" "_:tavernaEngine"
+                     "@type" "tavernaprov:TavernaEngine" }
    })
 
 (defn run-json-resource [run]  
@@ -65,7 +66,8 @@
 (defn process-json [run process]
   { "@id" (process-uri run process)
     "@type" :ProcessRun
-    "wasEnactedBy" { "@type" "tavernaprov:TavernaEngine" }
+    "wasEnactedBy" { "@id" "_:tavernaEngine"
+                     "@type" "tavernaprov:TavernaEngine" }
     "wasPartOfWorkflowRun" (run-json run)
     })
 
