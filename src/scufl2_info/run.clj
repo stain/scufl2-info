@@ -36,11 +36,12 @@
 (defn jsonld-context [run]
   { "@context" {
                 "@base" (run-uri run)
-                "rdfs" "http://www.w3.org/2000/01/rdf-schema#"
-                "seeAlso" { "@id" "rdfs:seeAlso"
-                            "@type" "@id" }
-                "label" "rdfs:label"
+                ;"rdfs" "http://www.w3.org/2000/01/rdf-schema#"
+                ;"seeAlso" { "@id" "rdfs:seeAlso"
+                ;            "@type" "@id" }
+                ;"label" "rdfs:label"
                 "@vocab" "http://purl.org/wf4ever/wfprov#"
+                "tavernaprov" "http://ns.taverna.org.uk/2012/tavernaprov/"
                 "scufl2" "http://ns.taverna.org.uk/2010/scufl2#"
                 }})
 

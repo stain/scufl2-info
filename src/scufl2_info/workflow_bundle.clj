@@ -33,8 +33,8 @@
 (defn wfbundle-json [uuid]
   { "@context" {
                 "@base" (wfbundle-uri uuid)
-                "rdfs" "http://www.w3.org/2000/01/rdf-schema#"
-                "seeAlso" "rdfs:seeAlso"
+;                "rdfs" "http://www.w3.org/2000/01/rdf-schema#"
+;                "seeAlso" "rdfs:seeAlso"
                 "@vocab" "http://ns.taverna.org.uk/2010/scufl2#"
                 }
     ; Absolute URI here, because some people would be confused by "" or "."
