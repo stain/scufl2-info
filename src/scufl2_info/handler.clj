@@ -1,6 +1,9 @@
 (ns scufl2-info.handler
   (:use compojure.core)
-  (:require [scufl2-info.workflow-bundle :as wfbundle]
+  (:require 
+            [scufl2-info.workflow-bundle :as wfbundle]
+            [scufl2-info.run :as run]
+            ;[scufl2-info.data :as data]
             [compojure.handler :as handler]
             [ring.middleware.json :as middleware]
             [ring.util.codec :as codec]
@@ -31,7 +34,11 @@
               ")
   ; TODO: Check that uuid is a valid uuid, else 404 on all below
   (GET "/workflowBundle" [] (response/redirect "/workflowBundle/"))
+  (GET "/data" [] (response/redirect "/data/"))
+  (GET "/run" [] (response/redirect "/run/"))
   wfbundle/wfbundle-context
+  ;data/data-context 
+  run/run-context 
   (route/resources "/")
   (route/not-found "Not Found"))
 
