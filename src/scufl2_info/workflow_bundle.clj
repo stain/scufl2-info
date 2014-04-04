@@ -124,25 +124,25 @@
               ")
   (context "/:uuid" [uuid] 
     (GET "/" 
-        [uuid] (wfbundle-json uuid))
+        [uuid] {:body (wfbundle-json uuid) } )
     (GET "/workflow/:workflow/" 
-        [workflow] (workflow-json uuid workflow)) 
+        [workflow] {:body (workflow-json uuid workflow)}) 
     (GET "/workflow/:workflow/in/:port" 
-        [workflow processor port] (workflow-port-json uuid workflow :in port))
+        [workflow processor port] {:body (workflow-port-json uuid workflow :in port)})
     (GET "/workflow/:workflow/out/:port" 
-        [workflow processor port] (workflow-port-json uuid workflow :out port))
+        [workflow processor port] {:body (workflow-port-json uuid workflow :out port)})
     (GET "/workflow/:workflow/processor/:processor/" 
-        [workflow processor] (processor-json uuid workflow processor))
+        [workflow processor] {:body (processor-json uuid workflow processor)})
     (GET "/workflow/:workflow/processor/:processor/in/:port" 
-        [workflow processor port] (processor-port-json uuid workflow processor :in port))
+        [workflow processor port] {:body (processor-port-json uuid workflow processor :in port)})
     (GET "/workflow/:workflow/processor/:processor/out/:port" 
-        [workflow processor port] (processor-port-json uuid workflow processor :out port))
+        [workflow processor port] {:body (processor-port-json uuid workflow processor :out port)})
     (GET "/workflow/:workflow/processor/:processor/iterationstrategy/" 
-        [workflow processor] (iteration-stack-json uuid workflow processor))
+        [workflow processor] {:body (iteration-stack-json uuid workflow processor)})
     (GET "/workflow/:workflow/datalink"
         [workflow from to] 
         (if (or (nil? from) (nil? to))
-          { :status 404
-            :body "Not Found.\ndatalink requires query parameters 'from' and 'to'" } 
-        (datalink-json uuid workflow from to))))))
+          {:status 404
+           :body "Not Found.\ndatalink requires query parameters 'from' and 'to'" } 
+          {:body (datalink-json uuid workflow from to)})))))
 
