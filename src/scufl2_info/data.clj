@@ -46,7 +46,7 @@
 
 (defn error-json [data error depth]
    {
-    "@id" (error-uri data error) 
+    "@id" (error-uri data error depth) 
     "@type" ["tavernaprov:Error" :Artifact "prov:Entity"]
     "depth" (ensure-int depth)
     "involvedInRun" (run-uri data)
@@ -72,7 +72,7 @@
 (defn error-json-resource [data error depth]
   {:body    
     (merge 
-        (error-json data error)
+        (error-json data error depth)
         (jsonld-context) 
       )})
 
