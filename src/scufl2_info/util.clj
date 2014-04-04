@@ -1,5 +1,5 @@
 (ns scufl2-info.util
-  (:import com.github.jsonldjava.jena.JenaJSONLD)
+  ;(:import com.github.jsonldjava.jena.JenaJSONLD)
   )
 
 
