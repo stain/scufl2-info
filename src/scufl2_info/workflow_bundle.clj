@@ -1,5 +1,6 @@
 (ns scufl2-info.workflow-bundle
   (:use compojure.core)
+  (:use scufl2-info.util)
   (:require
             [compojure.handler :as handler]
             [ring.middleware.json :as middleware]
@@ -9,7 +10,7 @@
             ))
 
 (defn wfbundle-uri [uuid]
-  (str "http://ns.taverna.org.uk/2010/workflowBundle/" (codec/url-encode uuid) "/"))
+  (str "http://ns.taverna.org.uk/2010/workflowBundle/" (ensure-uuid uuid) "/"))
 
 (defn workflow-uri [uuid workflow]
   ; Relative URI from wfbundle, as we set @base
@@ -99,17 +100,6 @@
              ; processors, or expect the client to simply follow the links?
              }))
 
-(defn replace-second [coll new-second]
-  (cons (first coll) 
-        (cons new-second
-              (rest (rest coll)))))
-
-(defmacro check-uuid [call]
-  "Replace the 'uuid' argument in call with a normalized UUID string, and wrap as { :body return }"
-   `(try { :body ~(replace-second call `(str (java.util.UUID/fromString ~(second call)))) }
-    (catch IllegalArgumentException ~'e { :status 400 :body (str "Invalid workflow bundle UUID: " ~(second call))})))
-
-
 (def wfbundle-context (context "/workflowBundle" []
   (GET "/" [] "
               <h1>scufl2-info wfbundles</h1>
@@ -133,27 +123,26 @@
               Questions? Contact support@mygrid.org.uk
               ")
   (context "/:uuid" [uuid] 
-    ;; TODO: Check UUID here instead of using check-uuid macro?       
     (GET "/" 
-        [uuid] (check-uuid (wfbundle-json uuid)))
+        [uuid] (wfbundle-json uuid))
     (GET "/workflow/:workflow/" 
-        [workflow] (check-uuid (workflow-json uuid workflow))) 
+        [workflow] (workflow-json uuid workflow)) 
     (GET "/workflow/:workflow/in/:port" 
-        [workflow processor port] (check-uuid (workflow-port-json uuid workflow :in port)))
+        [workflow processor port] (workflow-port-json uuid workflow :in port))
     (GET "/workflow/:workflow/out/:port" 
-        [workflow processor port] (check-uuid (workflow-port-json uuid workflow :out port)))
+        [workflow processor port] (workflow-port-json uuid workflow :out port))
     (GET "/workflow/:workflow/processor/:processor/" 
-        [workflow processor] (check-uuid (processor-json uuid workflow processor)))
+        [workflow processor] (processor-json uuid workflow processor))
     (GET "/workflow/:workflow/processor/:processor/in/:port" 
-        [workflow processor port] (check-uuid (processor-port-json uuid workflow processor :in port)))
+        [workflow processor port] (processor-port-json uuid workflow processor :in port))
     (GET "/workflow/:workflow/processor/:processor/out/:port" 
-        [workflow processor port] (check-uuid (processor-port-json uuid workflow processor :out port)))
+        [workflow processor port] (processor-port-json uuid workflow processor :out port))
     (GET "/workflow/:workflow/processor/:processor/iterationstrategy/" 
-        [workflow processor] (check-uuid (iteration-stack-json uuid workflow processor)))
+        [workflow processor] (iteration-stack-json uuid workflow processor))
     (GET "/workflow/:workflow/datalink"
         [workflow from to] 
         (if (or (nil? from) (nil? to))
           { :status 404
             :body "Not Found.\ndatalink requires query parameters 'from' and 'to'" } 
-        (check-uuid (datalink-json uuid workflow from to)))))))
+        (datalink-json uuid workflow from to))))))
 

@@ -11,18 +11,14 @@
 
 
 (defn data-uri [data]
-  (str "http://ns.taverna.org.uk/2011/data/" (normalize-uuid data) "/"))
+  (str "http://ns.taverna.org.uk/2011/data/" (ensure-uuid data) "/"))
 
 (defn run-uri [uuid]
-  (str "http://ns.taverna.org.uk/2011/run/" (normalize-uuid uuid) "/"))
+  (str "http://ns.taverna.org.uk/2011/run/" (ensure-uuid uuid) "/"))
 
 (defn ref-uri [data reference]
   ; Relative URI from data, as we set @base
-  (str (data-uri (ensure-uuid data)) "ref/" (ensure-uuid reference) "/"))
-
-(defn error-uri [data error depth]
-  ; Relative URI from data, as we set @base
-  (str (data-uri (ensure-uuid data)) "error/" (ensure-uuid error) "/" (ensure-int depth)))
+  (str (data-uri data) "ref/" (ensure-uuid reference) "/"))
 
 (defn jsonld-context []
   { "@context" {
@@ -45,8 +41,8 @@
 
 (defn error-json [data reference depth]
    {
-    "@id" (error-uri data reference depth) 
-    "@type" "tavernaprov:Error"
+    "@id" (ref-uri data reference) 
+    "@type" tavernaprov:Error
     "depth" (int depth)
     "involvedInRun" (run-uri data)
    })
@@ -60,11 +56,12 @@
         )})
 
 (defn error-json-resource [data reference depth]
-      {:body    
-        (merge 
-            (error-json data reference  depth))
-            (jsonld-context) ;; last -> on top
-          })
+  {:body    
+    (merge 
+        (error-json data reference)
+        (jsonld-context) ;; last -> on top
+      )})
+
 
 
 (def data-context (context "/data" []

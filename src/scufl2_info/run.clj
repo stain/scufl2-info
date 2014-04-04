@@ -11,11 +11,11 @@
 
 
 (defn run-uri [run]
-  (str "http://ns.taverna.org.uk/2011/run/" (normalize-uuid run) "/"))
+  (str "http://ns.taverna.org.uk/2011/run/" (ensure-uuid run) "/"))
 
 (defn process-uri [run process]
   ; Relative URI from run, as we set @base
-  (str "process/" (normalize-uuid process) "/"))
+  (str "process/" (ensure-uuid process) "/"))
 
 (defn jsonld-context [run]
   { "@context" {
@@ -39,12 +39,11 @@
    })
 
 (defn run-json-resource [run]  
-   (or (uuid-test run)
-        {:body    
-          (merge 
-              (run-json run)
-              (jsonld-context run) ;; last -> on top
-            )}))
+   {:body    
+      (merge 
+          (run-json run)
+          (jsonld-context run) ;; last -> on top
+        )})
 
 
 (defn process-json [run process]
@@ -56,13 +55,11 @@
     })
 
 (defn process-json-resource [run process]  
-   (or (uuid-test run)
-       (uuid-test process)
-       {:body 
-        (merge 
-          (process-json run process)
-          (jsonld-context run) ;; last -> on top
-        )}))
+  {:body 
+    (merge 
+      (process-json run process)
+      (jsonld-context run) ;; last -> on top
+    )})
   
 
 
@@ -87,7 +84,6 @@
               Questions? Contact support@mygrid.org.uk
               ")
   (context "/:run" [run] 
-    ;; TODO: Check UUID here instead of using check-uuid macro?
     (GET "/" 
         [uuid] (run-json-resource run))
     (GET "/process/:process/" 

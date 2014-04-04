@@ -8,6 +8,8 @@
                  [org.clojure/tools.reader "0.7.3"]
                  [commons-fileupload/commons-fileupload "1.3"]
                  [ring/ring-json "0.3.0"]
+                 ;[com.github.jsonld-java/jsonld-java "0.3"]
+                 [com.github.jsonld-java/jsonld-java-jena "0.3"]
                  [compojure "1.1.6"]]
   :plugins [[lein-ring "0.8.10"]]
   :ring {:handler scufl2-info.handler/app}
