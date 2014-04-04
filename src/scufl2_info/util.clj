@@ -1,19 +1,27 @@
-(ns scufl2-info.util)
+(ns scufl2-info.util
+  (:import com.github.jsonldjava.jena.JenaJSONLD)
+  )
 
-(defn normalize-uuid [uuid]
-  (str (java.util.UUID/fromString uuid)))  
 
-(defn uuid-test [uuid]
-  "Check the uuid is valid. If the uuid is invalid, a ring response map
-  with a 400 error message is returned, otherwise nil is returned.
-  
-  Example use:
-
-  (GET \"test/:uuid/\" (or (uuid-test uuid) (str \"Your uuid is \" uuid)))
-  "
+(defn ensure-uuid [uuid]
    (try 
-     (java.util.UUID/fromString uuid)
-     nil
+      (java.util.UUID/fromString uuid)
     (catch Exception e
-      { :status 400 :body (str "Invalid UUID: " uuid) })))
+      (throw (ex-info (str "Invalid UUID" uuid) {:status 400})))))
+
+(defn ensure-int [number]
+  (try
+    (Integer/parseInt number)
+  (catch NumberFormatException e
+    (throw (ex-info (str "Invalid integer" number) {:status 400})))))
+
+; Initialize once
+;(JenaJSONLD/init)
+
+;(defn jsonld-to-turtle [json]
+;  json
+;  ;; TODO
+;  )
+  
+
 

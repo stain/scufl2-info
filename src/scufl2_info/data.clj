@@ -18,7 +18,11 @@
 
 (defn ref-uri [data reference]
   ; Relative URI from data, as we set @base
-  (str (data-uri data) "ref/" (normalize-uuid reference) "/"))
+  (str (data-uri (ensure-uuid data)) "ref/" (ensure-uuid reference) "/"))
+
+(defn error-uri [data error depth]
+  ; Relative URI from data, as we set @base
+  (str (data-uri (ensure-uuid data)) "error/" (ensure-uuid error) "/" (ensure-int depth)))
 
 (defn jsonld-context []
   { "@context" {
@@ -26,8 +30,9 @@
                 "tavernaprov" "http://ns.taverna.org.uk/2012/tavernaprov/"
                 "prov" "http://www.w3.org/ns/prov#"
                 ; TODO: define new subproperty in tavernaprov
-                "involvedInRun" { "@id" "prov:wasInfluencedBy"
+                "involvedInRun" { "@id" "tavernaprov:involvedInRun"
                                   "@type" "@id" }
+                "depth" "tavernaprov:depth"
                 "scufl2" "http://ns.taverna.org.uk/2010/scufl2#"
                 }})
 
@@ -38,16 +43,28 @@
     "involvedInRun" (run-uri data)
    })
 
-(defn ref-json-resource [data reference]  
-   (or 
-     (uuid-test data)
-     (uuid-test reference)
-        {:body    
-          (merge 
-              (ref-json data reference)
-              (jsonld-context) ;; last -> on top
-            )}))
+(defn error-json [data reference depth]
+   {
+    "@id" (error-uri data reference depth) 
+    "@type" "tavernaprov:Error"
+    "depth" (int depth)
+    "involvedInRun" (run-uri data)
+   })
 
+
+(defn ref-json-resource [data reference]  
+    {:body    
+      (merge 
+          (ref-json data reference)
+          (jsonld-context) ;; last -> on top
+        )})
+
+(defn error-json-resource [data reference depth]
+      {:body    
+        (merge 
+            (error-json data reference  depth))
+            (jsonld-context) ;; last -> on top
+          })
 
 
 (def data-context (context "/data" []
@@ -76,5 +93,10 @@
     (GET "/" 
         [uuid] (response/redirect (run-uri data)))
     (GET "/ref/:reference/" 
-        [reference] (ref-json-resource data reference)))))
+        [reference] (ref-json-resource data reference))
+           
+    (GET "/error/:reference/:depth" 
+        [reference depth] (error-json-resource data reference depth))
+           
+           )))
 

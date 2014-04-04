@@ -42,7 +42,38 @@
   (route/resources "/")
   (route/not-found "Not Found"))
 
+(defn ex-info-status
+  "Ring Middleware that catches exceptions which minimally contain the (ex-data) key :status.
+
+  The exception message will be used as body, unless the ex-data contains a :body key.
+  Additional Ring response keys can be used to customize headers, etc.
+
+  Example:
+     (throw (ex-info \"Resource was deleted.\" { :status 410 }))
+
+  Redirection:
+     (throw (ex-info nil (ring.util.response/redirect \"http://example.com/\")))
+
+  Usage with ring: 
+    (def app
+      (-> 
+        (handler/site app-routes)
+        (ex-info-status)))
+  "
+
+  [handler]
+  (fn [request]
+    (try (handler request)
+         (catch Exception e
+           (if (:status (ex-data e))
+             (merge 
+               { :body (.getMessage e) }
+               (ex-data e))
+           (throw e))))))
+
+
 (def app
   (-> 
     (handler/site app-routes)
+    (ex-info-status)
     (middleware/wrap-json-response {:pretty true})))
