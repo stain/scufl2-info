@@ -32,21 +32,20 @@
                     <li> <a href='workflowBundle/2f0e94ef-b5c4-455d-aeab-1e9611f46b8b/workflow/HelloWorld/datalink?from=processor/hello/out/output1&to=out/result'>datalink</a></li>
               </ul></li>
 
-                <li> <a href='d5ee659e-e11e-43a5-bc0a-58d93674e5e2/'>workflow run</a>
+                <li> <a href='run/d5ee659e-e11e-43a5-bc0a-58d93674e5e2/'>workflow run</a>
                 <ul>
-                  <li> <a href='d5ee659e-e11e-43a5-bc0a-58d93674e5e2/process/1e027057-2aeb-47f7-97dc-03e19e9772be/'>process run</a></li>
+                  <li> <a href='run/d5ee659e-e11e-43a5-bc0a-58d93674e5e2/process/1e027057-2aeb-47f7-97dc-03e19e9772be/'>process run</a></li>
                 </ul></li>
 
-                <li> <a href='d5ee659e-e11e-43a5-bc0a-58d93674e5e2/ref/a060702f-7962-4773-9be3-99c026dd5da5/'>data artifact</a></li>
-                <li> <a href='d5ee659e-e11e-43a5-bc0a-58d93674e5e2/list/c2f58d3e-8686-40a5-b1cd-b797cd18fbb7/false/1'>list (depth 1)</a></li>
-                <li> <a href='d5ee659e-e11e-43a5-bc0a-58d93674e5e2/list/2cdc8e4c-ebcf-4662-83db-85a2fd496ca7/true/2'>list (depth 2, w/errors)</a></li>
-                <li> <a href='d5ee659e-e11e-43a5-bc0a-58d93674e5e2/error/49785ed7-eda9-4d53-b74f-6c6a7a4940a5/0'>error (depth 0)</a></li>
+                <li> <a href='data/d5ee659e-e11e-43a5-bc0a-58d93674e5e2/ref/a060702f-7962-4773-9be3-99c026dd5da5/'>data artifact</a></li>
+                <li> <a href='data/d5ee659e-e11e-43a5-bc0a-58d93674e5e2/list/c2f58d3e-8686-40a5-b1cd-b797cd18fbb7/false/1'>list (depth 1)</a></li>
+                <li> <a href='data/d5ee659e-e11e-43a5-bc0a-58d93674e5e2/list/2cdc8e4c-ebcf-4662-83db-85a2fd496ca7/true/2'>list (depth 2, w/errors)</a></li>
+                <li> <a href='data/d5ee659e-e11e-43a5-bc0a-58d93674e5e2/error/49785ed7-eda9-4d53-b74f-6c6a7a4940a5/0'>error (depth 0)</a></li>
 
               </ul>
               <p>
               Questions? Contact support@mygrid.org.uk
               ")
-  ; TODO: Check that uuid is a valid uuid, else 404 on all below
   (GET "/workflowBundle" [] (response/redirect "/workflowBundle/"))
   (GET "/data" [] (response/redirect "/data/"))
   (GET "/run" [] (response/redirect "/run/"))
@@ -77,16 +76,11 @@
 
   [handler]
   (fn [request]
-;    (try (handler request)
-;         (catch Exception e
-;           (if (:status (ex-data e))
-;           (throw e))))))
-
-  (try+ (handler request)
-    (catch-data :status {:as data, :ex e}
-                (merge 
-                  { :body (.getMessage e) }
-                  data)))))
+    (try+ (handler request)
+      (catch-data :status {:as data, :ex e}
+                  (merge 
+                    { :body (.getMessage e) }
+                    data)))))
 
 (def app
   (-> 
