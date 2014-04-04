@@ -1,6 +1,7 @@
 (ns scufl2-info.handler
   (:use compojure.core)
   (:require 
+            [com.gfredericks.catch-data :refer [try+]]
             [scufl2-info.workflow-bundle :as wfbundle]
             [scufl2-info.run :as run]
             [scufl2-info.data :as data]
@@ -76,14 +77,16 @@
 
   [handler]
   (fn [request]
-    (try (handler request)
-         (catch Exception e
-           (if (:status (ex-data e))
-             (merge 
-               { :body (.getMessage e) }
-               (ex-data e))
-           (throw e))))))
+;    (try (handler request)
+;         (catch Exception e
+;           (if (:status (ex-data e))
+;           (throw e))))))
 
+  (try+ (handler request)
+    (catch-data :status {:as data, :ex e}
+                (merge 
+                  { :body (.getMessage e) }
+                  data)))))
 
 (def app
   (-> 

@@ -7,6 +7,7 @@
                  ;; transitively!!
                  [org.clojure/tools.reader "0.7.3"]
                  [commons-fileupload/commons-fileupload "1.3"]
+                 [com.gfredericks/catch-data "0.1.0"]
                  [ring/ring-json "0.3.0"]
                  ;[com.github.jsonld-java/jsonld-java "0.3"]
                  [com.github.jsonld-java/jsonld-java-jena "0.3"]

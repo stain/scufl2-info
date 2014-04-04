@@ -17,8 +17,13 @@
   (str "http://ns.taverna.org.uk/2011/run/" (ensure-uuid uuid) "/"))
 
 (defn ref-uri [data reference]
-  ; Relative URI from data, as we set @base
   (str (data-uri data) "ref/" (ensure-uuid reference) "/"))
+
+(defn error-uri [data error depth]
+  (str (data-uri data) "error/" (ensure-uuid error) "/" (ensure-int depth)))
+
+(defn list-uri [data listref has-errors depth]
+  (str (data-uri data) "list/" (ensure-uuid listref) "/" (ensure-bool has-errors) "/" (ensure-int depth)))
 
 (defn jsonld-context []
   { "@context" {
@@ -39,11 +44,19 @@
     "involvedInRun" (run-uri data)
    })
 
-(defn error-json [data reference depth]
+(defn error-json [data error depth]
    {
-    "@id" (ref-uri data reference) 
-    "@type" tavernaprov:Error
-    "depth" (int depth)
+    "@id" (error-uri data error) 
+    "@type" "tavernaprov:Error"
+    "depth" (ensure-int depth)
+    "involvedInRun" (run-uri data)
+   })
+
+(defn list-json [data listref has-errors depth]
+   {
+    "@id" (list-uri data listref has-errors depth) 
+    "@type" "tavernaprov:Error"
+    "depth" (ensure-int depth)
     "involvedInRun" (run-uri data)
    })
 
@@ -52,16 +65,22 @@
     {:body    
       (merge 
           (ref-json data reference)
-          (jsonld-context) ;; last -> on top
+          (jsonld-context)
         )})
 
-(defn error-json-resource [data reference depth]
+(defn error-json-resource [data error depth]
   {:body    
     (merge 
-        (error-json data reference)
-        (jsonld-context) ;; last -> on top
+        (error-json data error)
+        (jsonld-context) 
       )})
 
+(defn list-json-resource [data listref has-errors depth]
+  {:body    
+    (merge 
+        (list-json data listref has-errors depth)
+        (jsonld-context) 
+      )})
 
 
 (def data-context (context "/data" []
@@ -91,9 +110,10 @@
         [uuid] (response/redirect (run-uri data)))
     (GET "/ref/:reference/" 
         [reference] (ref-json-resource data reference))
-           
-    (GET "/error/:reference/:depth" 
-        [reference depth] (error-json-resource data reference depth))
+    (GET "/list/:listref/:hasErrors/:depth" 
+        [listref has-errors depth] (list-json-resource data listref has-errors depth))
+    (GET "/error/:error/:depth" 
+        [error depth] (error-json-resource data error depth))
            
            )))
 
