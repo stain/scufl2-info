@@ -40,14 +40,14 @@
 (defn ref-json [data reference]
    {
     "@id" (ref-uri data reference) 
-    "@type" :Artifact
+    "@type" [:Artifact "prov:Entity"]
     "involvedInRun" (run-uri data)
    })
 
 (defn error-json [data error depth]
    {
     "@id" (error-uri data error) 
-    "@type" "tavernaprov:Error"
+    "@type" ["tavernaprov:Error" :Artifact "prov:Entity"]
     "depth" (ensure-int depth)
     "involvedInRun" (run-uri data)
    })
@@ -55,7 +55,8 @@
 (defn list-json [data listref has-errors depth]
    {
     "@id" (list-uri data listref has-errors depth) 
-    "@type" "tavernaprov:Error"
+    "@type" (let [types ["prov:Collection" :Artifact "prov:Entity"]]
+              (if (ensure-bool has-errors) (conj types "tavernaprov:ContainsError" has-errors) types))
     "depth" (ensure-int depth)
     "involvedInRun" (run-uri data)
    })
@@ -110,7 +111,7 @@
         [uuid] (response/redirect (run-uri data)))
     (GET "/ref/:reference/" 
         [reference] (ref-json-resource data reference))
-    (GET "/list/:listref/:hasErrors/:depth" 
+    (GET "/list/:listref/:has-errors/:depth" 
         [listref has-errors depth] (list-json-resource data listref has-errors depth))
     (GET "/error/:error/:depth" 
         [error depth] (error-json-resource data error depth))
