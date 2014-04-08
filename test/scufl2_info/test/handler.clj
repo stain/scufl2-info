@@ -34,6 +34,15 @@
     (is (= (get-in run ["@context" "tavernaprov"]) "http://ns.taverna.org.uk/2012/tavernaprov/"))
     (is (= (get-in run ["@context" "@base"]) "http://ns.taverna.org.uk/2011/run/745c1f72-d57b-45ee-a7cc-437358f91e45/")))
 
+(defn test-data-reference [data]
+  (is (not (nil? data)))
+  (is (= (get data "@id") "http://ns.taverna.org.uk/2011/data/745c1f72-d57b-45ee-a7cc-437358f91e45/ref/d2079164-3cd8-4b58-b6ff-c3bf61e3e04e/"))
+  (is (contains? (get data "@type") "Artifact"))
+  (is (contains? (get data "@type") "prov:Entity"))
+  (is (= (get data "involvedInRun") "http://ns.taverna.org.uk/2011/run/745c1f72-d57b-45ee-a7cc-437358f91e45/"))
+  (is (= (get-in data ["@context" "@vocab"]) "http://purl.org/wf4ever/wfprov#"))
+  (is (= (get-in data ["@context" "tavernaprov"]) "http://ns.taverna.org.uk/2012/tavernaprov/")))
+
 (defn test-workflow [workflow]
   (is (not (nil? workflow)))
   (is (= (get workflow "name") "HelloWorld"))
@@ -218,7 +227,31 @@
   (testing "run not-found"
     (let [response (app (request :get "/run/745c1f72-d57b-45ee-a7cc-437358f91e45/other"))]
       (is (= (:status response) 404))))
-  
+
+  (testing "data reference"
+    (let [response (app (request :get "/data/745c1f72-d57b-45ee-a7cc-437358f91e45/ref/d2079164-3cd8-4b58-b6ff-c3bf61e3e04e/"))]
+      (is (= (:status response) 200))
+      (let [json (parse-string (:body response))]
+        (test-data-reference json))))
+
+;  (testing "data list noerror depth1"
+;    (let [response (app (request :get "/data/745c1f72-d57b-45ee-a7cc-437358f91e45/list/486b0d87-74d4-49d5-8dad-fb64bf65ac80/false/1"))]
+;      (is (= (:status response) 200))
+;      (let [json (parse-string (:body response))]
+;        (test-data-list json))))
+;
+;  (testing "data list error depth2"
+;    (let [response (app (request :get "/data/745c1f72-d57b-45ee-a7cc-437358f91e45/list/6b6ba3ed-d526-4d26-b16c-92976bf409fb/true/2"))]
+;      (is (= (:status response) 200))
+;      (let [json (parse-string (:body response))]
+;        (test-data-list-error json))))
+;
+;  (testing "data error depth"
+;    (let [response (app (request :get "/data/745c1f72-d57b-45ee-a7cc-437358f91e45/error/d93b2a9c-49f7-436a-9861-54320b8a77ae/0"))]
+;      (is (= (:status response) 200))
+;      (let [json (parse-string (:body response))]
+;        (test-data-error json))))
+
   (testing "not-found route"
     (let [response (app (request :get "/invalid"))]
       (is (= (:status response) 404)))))
