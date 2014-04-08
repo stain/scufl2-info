@@ -18,6 +18,12 @@
 (defn ensure-bool [bool-str]
   (Boolean/parseBoolean bool-str))
 
+;; by g-faustus http://stackoverflow.com/a/3249777
+(defn in? 
+  "true if seq contains elm"
+  [seq elm]  
+  (some #(= elm %) seq))
+
 ; Initialize once
 ;(JenaJSONLD/init)
 

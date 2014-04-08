@@ -1,5 +1,6 @@
 (ns scufl2-info.test.handler
   (:use clojure.test
+        scufl2-info.util
         ring.mock.request  
         cheshire.core 
         scufl2-info.handler))
@@ -19,7 +20,7 @@
     (is (contains? run "wasEnactedBy"))
     (is (= (get-in run ["wasEnactedBy" "@type"]) "tavernaprov:TavernaEngine" ))
     (is (contains? run "@context"))
-    (is (= (get-in run ["@context" "@vocab"]) "http://purl.org/wf4ever/wfprov#"))
+     (is (= (get-in run ["@context" "@vocab"]) "http://purl.org/wf4ever/wfprov#"))
     (is (= (get-in run ["@context" "tavernaprov"]) "http://ns.taverna.org.uk/2012/tavernaprov/"))
     (is (= (get-in run ["@context" "@base"]) "http://ns.taverna.org.uk/2011/run/745c1f72-d57b-45ee-a7cc-437358f91e45/")))
 
@@ -37,8 +38,8 @@
 (defn test-data-reference [data]
   (is (not (nil? data)))
   (is (= (get data "@id") "http://ns.taverna.org.uk/2011/data/745c1f72-d57b-45ee-a7cc-437358f91e45/ref/d2079164-3cd8-4b58-b6ff-c3bf61e3e04e/"))
-  (is (contains? (get data "@type") "Artifact"))
-  (is (contains? (get data "@type") "prov:Entity"))
+  (is (in? (get data "@type") "Artifact"))
+  (is (in? (get data "@type") "prov:Entity"))
   (is (= (get data "involvedInRun") "http://ns.taverna.org.uk/2011/run/745c1f72-d57b-45ee-a7cc-437358f91e45/"))
   (is (= (get-in data ["@context" "@vocab"]) "http://purl.org/wf4ever/wfprov#"))
   (is (= (get-in data ["@context" "tavernaprov"]) "http://ns.taverna.org.uk/2012/tavernaprov/")))
