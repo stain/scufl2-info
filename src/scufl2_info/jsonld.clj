@@ -12,16 +12,22 @@
 
 
 ; Initialize Jena binding once -- is this needed as long as we do import?
-;(JenaJSONLD/init)
+(JenaJSONLD/init)
 
 (defn jsonld-to-turtle [json]
-  ;; We need a mutable Java version :-(
-  (let [json (JSONUtils/fromString (json/generate-string (str json)))
-        reader (StringReader. json)
+  (let [jsonstr  (json/generate-string (str json))
+        reader (StringReader. jsonstr)
         writer (StringWriter. )
+        base  "app://6b16aa40-ae2a-4fbc-9c8d-321464f03f3d/"
         model (ModelFactory/createDefaultModel)]
-    (RDFDataMgr/read model reader "" JenaJSONLD/JSONLD)
-    (RDFDataMgr/write writer model Lang/TURTLE)
+    (print json)
+    (print jsonstr)
+    (print model)
+;    (RDFDataMgr/read model reader base JenaJSONLD/JSONLD)
+    (.read model reader base "JSON-LD")
+    (print model)
+    ;(RDFDataMgr/write writer model Lang/TURTLE)
+    (.write model writer base "TURTLE")
     (str writer)))
 
 
