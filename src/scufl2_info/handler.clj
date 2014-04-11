@@ -6,7 +6,7 @@
             [scufl2-info.run :as run]
             [scufl2-info.data :as data]
             [compojure.handler :as handler]
-            [ring.middleware.json :as middleware]
+            [ring.middleware.json :as json]
             [ring.util.codec :as codec]
             [ring.util.response :as response]
             [compojure.route :as route]))
@@ -86,4 +86,4 @@
   (-> 
     (handler/site app-routes)
     (ex-info-status)
-    (middleware/wrap-json-response {:pretty true})))
+    (json/wrap-json-response {:pretty true})))

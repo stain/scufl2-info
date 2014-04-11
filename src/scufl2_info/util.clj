@@ -1,5 +1,4 @@
 (ns scufl2-info.util
-  ;(:import com.github.jsonldjava.jena.JenaJSONLD)
   )
 
 
@@ -24,13 +23,5 @@
   [seq elm]  
   (some #(= elm %) seq))
 
-; Initialize once
-;(JenaJSONLD/init)
-
-;(defn jsonld-to-turtle [json]
-;  json
-;  ;; TODO
-;  )
-  
 
 
