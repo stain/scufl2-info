@@ -38,11 +38,47 @@
 (defn test-data-reference [data]
   (is (not (nil? data)))
   (is (= (get data "@id") "http://ns.taverna.org.uk/2011/data/745c1f72-d57b-45ee-a7cc-437358f91e45/ref/d2079164-3cd8-4b58-b6ff-c3bf61e3e04e/"))
+  ; TODO: Should there be a tavernaprov:Value or something?
   (is (in? (get data "@type") "Artifact"))
   (is (in? (get data "@type") "prov:Entity"))
   (is (= (get data "involvedInRun") "http://ns.taverna.org.uk/2011/run/745c1f72-d57b-45ee-a7cc-437358f91e45/"))
   (is (= (get-in data ["@context" "@vocab"]) "http://purl.org/wf4ever/wfprov#"))
   (is (= (get-in data ["@context" "tavernaprov"]) "http://ns.taverna.org.uk/2012/tavernaprov/")))
+
+(defn test-data-list [data]
+  (is (not (nil? data)))
+  (is (= (get data "@id") "http://ns.taverna.org.uk/2011/data/745c1f72-d57b-45ee-a7cc-437358f91e45/list/486b0d87-74d4-49d5-8dad-fb64bf65ac80/false/1"))
+  (is (in? (get data "@type") "prov:Collection"))
+  (is (in? (get data "@type") "Artifact"))
+  (is (in? (get data "@type") "prov:Entity"))
+  (is (= (get data "depth") 1))
+  (is (= (get data "involvedInRun") "http://ns.taverna.org.uk/2011/run/745c1f72-d57b-45ee-a7cc-437358f91e45/"))
+  (is (= (get-in data ["@context" "@vocab"]) "http://purl.org/wf4ever/wfprov#"))
+  (is (= (get-in data ["@context" "tavernaprov"]) "http://ns.taverna.org.uk/2012/tavernaprov/")))
+
+(defn test-data-list-error [data]
+  (is (not (nil? data)))
+  (is (= (get data "@id") "http://ns.taverna.org.uk/2011/data/745c1f72-d57b-45ee-a7cc-437358f91e45/list/6b6ba3ed-d526-4d26-b16c-92976bf409fb/true/2"))
+  (is (in? (get data "@type") "prov:Collection"))
+  (is (in? (get data "@type") "Artifact"))
+  (is (in? (get data "@type") "prov:Entity"))
+  (is (in? (get data "@type") "tavernaprov:ContainsError"))
+  (is (= (get data "depth") 2))
+  (is (= (get data "involvedInRun") "http://ns.taverna.org.uk/2011/run/745c1f72-d57b-45ee-a7cc-437358f91e45/"))
+  (is (= (get-in data ["@context" "@vocab"]) "http://purl.org/wf4ever/wfprov#"))
+  (is (= (get-in data ["@context" "tavernaprov"]) "http://ns.taverna.org.uk/2012/tavernaprov/")))
+
+(defn test-data-error [data]
+  (is (not (nil? data)))
+  (is (= (get data "@id") "http://ns.taverna.org.uk/2011/data/745c1f72-d57b-45ee-a7cc-437358f91e45/error/d93b2a9c-49f7-436a-9861-54320b8a77ae/0"))
+  (is (in? (get data "@type") "Artifact"))
+  (is (in? (get data "@type") "prov:Entity"))
+  (is (in? (get data "@type") "tavernaprov:Error"))
+  (is (= (get data "depth") 0))
+  (is (= (get data "involvedInRun") "http://ns.taverna.org.uk/2011/run/745c1f72-d57b-45ee-a7cc-437358f91e45/"))
+  (is (= (get-in data ["@context" "@vocab"]) "http://purl.org/wf4ever/wfprov#"))
+  (is (= (get-in data ["@context" "tavernaprov"]) "http://ns.taverna.org.uk/2012/tavernaprov/")))
+
 
 (defn test-workflow [workflow]
   (is (not (nil? workflow)))
@@ -235,23 +271,23 @@
       (let [json (parse-string (:body response))]
         (test-data-reference json))))
 
-;  (testing "data list noerror depth1"
-;    (let [response (app (request :get "/data/745c1f72-d57b-45ee-a7cc-437358f91e45/list/486b0d87-74d4-49d5-8dad-fb64bf65ac80/false/1"))]
-;      (is (= (:status response) 200))
-;      (let [json (parse-string (:body response))]
-;        (test-data-list json))))
-;
-;  (testing "data list error depth2"
-;    (let [response (app (request :get "/data/745c1f72-d57b-45ee-a7cc-437358f91e45/list/6b6ba3ed-d526-4d26-b16c-92976bf409fb/true/2"))]
-;      (is (= (:status response) 200))
-;      (let [json (parse-string (:body response))]
-;        (test-data-list-error json))))
-;
-;  (testing "data error depth"
-;    (let [response (app (request :get "/data/745c1f72-d57b-45ee-a7cc-437358f91e45/error/d93b2a9c-49f7-436a-9861-54320b8a77ae/0"))]
-;      (is (= (:status response) 200))
-;      (let [json (parse-string (:body response))]
-;        (test-data-error json))))
+  (testing "data list noerror depth1"
+    (let [response (app (request :get "/data/745c1f72-d57b-45ee-a7cc-437358f91e45/list/486b0d87-74d4-49d5-8dad-fb64bf65ac80/false/1"))]
+      (is (= (:status response) 200))
+      (let [json (parse-string (:body response))]
+        (test-data-list json))))
+
+  (testing "data list error depth2"
+    (let [response (app (request :get "/data/745c1f72-d57b-45ee-a7cc-437358f91e45/list/6b6ba3ed-d526-4d26-b16c-92976bf409fb/true/2"))]
+      (is (= (:status response) 200))
+      (let [json (parse-string (:body response))]
+        (test-data-list-error json))))
+
+  (testing "data error depth"
+    (let [response (app (request :get "/data/745c1f72-d57b-45ee-a7cc-437358f91e45/error/d93b2a9c-49f7-436a-9861-54320b8a77ae/0"))]
+      (is (= (:status response) 200))
+      (let [json (parse-string (:body response))]
+        (test-data-error json))))
 
   (testing "not-found route"
     (let [response (app (request :get "/invalid"))]
