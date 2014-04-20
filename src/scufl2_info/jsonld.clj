@@ -36,10 +36,20 @@
         (str writer)))))
 
 
+; lazy-mapcat by Benny Tsal 2011-08-22
+; https://groups.google.com/d/msg/clojure/vzhFmpGkWTo/SAC-lwzDI8cJ
+; https://groups.google.com/forum/#!topic/clojure/vzhFmpGkWTo
+(defn- lazy-mapcat [f & colls]
+  (lazy-seq
+   (when (every? seq colls)
+     (concat (apply f (map first colls))
+             (apply lazy-mapcat f (map rest colls))))))
+
 (defn content-types-of-lang [lang]
+  ;[(.getContentType (.getContentType lang))])
   (conj (seq (.getAltContentTypes lang)) (.getContentType (.getContentType lang))))
 
 (def rdf-content-types
-  (set (mapcat content-types-of-lang (RDFLanguages/getRegisteredLanguages))))
+  (distinct (lazy-mapcat content-types-of-lang (RDFLanguages/getRegisteredLanguages))))
 
 
