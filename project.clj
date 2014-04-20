@@ -9,8 +9,8 @@
                  [commons-fileupload/commons-fileupload "1.3"]
                  [com.gfredericks/catch-data "0.1.0"]
                  [ring/ring-json "0.3.0"]
-                 ;[com.github.jsonld-java/jsonld-java "0.3"]
                  [com.github.jsonld-java/jsonld-java-jena "0.3"]
+                 ;[com.github.jsonld-java/jsonld-java-jena "0.4.mygrid.2014-03-19"]
                  [compojure "1.1.6"]]
   :plugins [[lein-ring "0.8.10"]]
   :ring {:handler scufl2-info.handler/app}
