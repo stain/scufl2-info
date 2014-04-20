@@ -4,6 +4,7 @@
             [com.gfredericks.catch-data :refer [try+]]
             [scufl2-info.workflow-bundle :as wfbundle]
             [scufl2-info.run :as run]
+            [scufl2-info.jsonld :as jsonld]
             [scufl2-info.data :as data]
             [compojure.handler :as handler]
             [ring.middleware.json :as json]
@@ -78,12 +79,26 @@
   (fn [request]
     (try+ (handler request)
       (catch-data :status {:as data, :ex e}
+                  (println "Hello!")
                   (merge 
                     { :body (.getMessage e) }
                     data)))))
+
+(defn convert-jsonld
+  [handler]
+  (fn [request]
+    (let [{status :status
+           body :body
+           :as response} (handler request)]
+      (if (and (= 201 status) (coll? body))
+        (assoc response :body (jsonld/jsonld-to-rdf body :turtle))
+        response))))
+
 
 (def app
   (-> 
     (handler/site app-routes)
     (ex-info-status)
-    (json/wrap-json-response {:pretty true})))
+    (convert-jsonld)
+    (json/wrap-json-response {:pretty true})
+    ))
