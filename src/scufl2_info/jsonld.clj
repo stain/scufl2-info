@@ -26,11 +26,20 @@
         lang (RDFLanguages/nameToLang (name lang))
         ;model (ModelFactory/createDefaultModel)
     ]
-    (RDFDataMgr/read dataset stream base JenaJSONLD/JSONLD)
-    (if (RDFLanguages/isQuads lang)
-      (RDFDataMgr/write writer dataset lang)
-      (RDFDataMgr/write writer (.getDefaultModel dataset) lang))
-    (str writer)))
+    (if (= JenaJSONLD/JSONLD lang) json ; return as is
+      ; need to convert
+      (do 
+        (RDFDataMgr/read dataset stream base JenaJSONLD/JSONLD)
+        (if (RDFLanguages/isQuads lang)
+          (RDFDataMgr/write writer dataset lang)
+          (RDFDataMgr/write writer (.getDefaultModel dataset) lang))
+        (str writer)))))
 
+
+(defn content-types-of-lang [lang]
+  (conj (seq (.getAltContentTypes lang)) (.getContentType (.getContentType lang))))
+
+(def rdf-content-types
+  (mapcat content-types-of-lang (RDFLanguages/getRegisteredLanguages)))
 
 
