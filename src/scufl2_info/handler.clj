@@ -79,7 +79,6 @@
   (fn [request]
     (try+ (handler request)
       (catch-data :status {:as data, :ex e}
-                  (println "Hello!")
                   (merge 
                     { :body (.getMessage e) }
                     data)))))
