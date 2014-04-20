@@ -40,6 +40,6 @@
   (conj (seq (.getAltContentTypes lang)) (.getContentType (.getContentType lang))))
 
 (def rdf-content-types
-  (mapcat content-types-of-lang (RDFLanguages/getRegisteredLanguages)))
+  (set (mapcat content-types-of-lang (RDFLanguages/getRegisteredLanguages))))
 
 
