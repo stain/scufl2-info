@@ -4,6 +4,7 @@
   ;(:import com.github.jsonldjava.utils.JSONUtils)
   (:import org.apache.jena.riot.RDFDataMgr)
   (:import org.apache.jena.riot.Lang)
+  (:import org.apache.jena.riot.RDFLanguages)
   (:import com.hp.hpl.jena.rdf.model.ModelFactory)
   (:import com.hp.hpl.jena.query.DatasetFactory)
   (:import java.io.StringReader)
@@ -25,10 +26,14 @@
         stream (ByteArrayInputStream. (.getBytes jsonstr "UTF-8"))
         writer (StringWriter. )
         base  "app://6b16aa40-ae2a-4fbc-9c8d-321464f03f3d/"
-        ;dataset (DatasetFactory/createMem)
-        model (ModelFactory/createDefaultModel)]
-    (RDFDataMgr/read model stream base JenaJSONLD/JSONLD)
-    (RDFDataMgr/write writer model (rdf-language lang))
+        dataset (DatasetFactory/createMem)
+        lang (rdf-language lang)
+        ;model (ModelFactory/createDefaultModel)
+    ]
+    (RDFDataMgr/read dataset stream base JenaJSONLD/JSONLD)
+    (if (RDFLanguages/isQuads lang)
+      (RDFDataMgr/write writer dataset lang)
+      (RDFDataMgr/write writer (.getDefaultModel dataset) lang))
     (str writer)))
 
 
