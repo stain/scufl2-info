@@ -5,10 +5,18 @@
 (defn verify-turtle [turtle]
   ;(print turtle)
       (is (. turtle contains "<http://example.com/a>"))
-      (is (. turtle contains " a "))
+  ;; Not true for ntriples
+      ;(is (. turtle contains " a "))
       (is (. turtle contains "<http://example.org/b>"))
       (is (. turtle contains "<http://example.net/c>"))
       (is (. turtle contains "\"d\"")))
+
+(defn verify-rdfxml [rdfxml]
+      (is (. rdfxml contains "\"http://example.com/a\""))
+      (is (. rdfxml contains "rdf:about"))
+      (is (. rdfxml contains "http://example.org/"))
+      (is (. rdfxml contains "http://example.net/"))
+      (is (. rdfxml contains ">d<")))
 
 (deftest test-jsonld
   (testing "jsonld-to-turtle"
@@ -21,8 +29,7 @@
           ]
       (verify-turtle turtle)
       (verify-turtle ntriples)
-      ;;TODO: Test RDF/XML
-      (print rdfxml)
+      (verify-rdfxml rdfxml)
       )))
 
 
