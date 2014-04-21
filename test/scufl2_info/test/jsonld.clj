@@ -38,12 +38,13 @@
               "http://example.net/c" "d" })
 
 
-(deftest test-jsonld
-  (testing "jsonld-to-turtle"
-    (let [ turtle (jsonld-to-rdf jsonld :turtle)
-           ntriples (jsonld-to-rdf jsonld :ntriples)
-           rdfxml (jsonld-to-rdf jsonld :rdfxml) ]
-      (verify-turtle turtle)
-      (verify-turtle ntriples)
-      (verify-rdfxml rdfxml))))
+(deftest test-jsonld-to-rdf
+  (testing "jsonld to turtle"
+    (verify-turtle (jsonld-to-rdf jsonld :turtle)))
+  (testing "jsonld to ntriples"
+    (verify-turtle (jsonld-to-rdf jsonld :ntriples)))
+  (testing "jsonld to rdfxml"
+    (verify-rdfxml (jsonld-to-rdf jsonld :rdfxml)))
+  (testing "jsonld-to-every-content-type"
+    (map (partial jsonld-to-rdf jsonld) rdf-content-types)))
 
