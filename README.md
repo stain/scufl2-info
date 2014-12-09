@@ -84,6 +84,16 @@ To start a developer web server for the application, run:
 To generate a WAR that can be installed into a servlet container like Apache Tomcat:
 
     lein ring uberwar
+    
+
+## Docker image
+
+This service is also available as a Docker image 
+[stain/scufl2-info](https://registry.hub.docker.com/u/stain/scufl2-info/), exposing the ports `8080` (HTTP) and `8009` (AJP)
+through [tomcat](https://registry.hub.docker.com/_/tomcat/).
+
+    docker run -p 8080:8080 stain/scufl2-info
+
 
 ## License
 
