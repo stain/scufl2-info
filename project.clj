@@ -1,4 +1,4 @@
-(defproject scufl2-info "0.4.0-SNAPSHOT"
+(defproject scufl2-info "0.4.0"
   :description "SCUFL2 information service"
   :url "https://github.com/stain/scufl2-info"
   :dependencies [
