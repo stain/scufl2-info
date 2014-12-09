@@ -1,5 +1,7 @@
 # scufl2-info
 
+[![Build Status](https://travis-ci.org/stain/scufl2-info.svg?branch=0.4.0)](https://travis-ci.org/stain/scufl2-info)
+
 Returns Linked Data information about a [SCUFL2](http://dev.mygrid.org.uk/wiki/display/developer/SCUFL2) 
 resource.
 
