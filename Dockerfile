@@ -1,4 +1,5 @@
 FROM tomcat:7-jre7
+MAINTAINER "Stian Soiland-Reyes <orcid.org/0000-0001-9842-9718>"
 
 RUN rm -rf /usr/local/tomcat/webapps/*
 
