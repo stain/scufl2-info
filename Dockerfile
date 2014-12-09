@@ -15,5 +15,5 @@ COPY project.clj /tmp/
 COPY src /tmp/src/
 COPY resources /tmp/resources/
 
-RUN lein deps && lein ring uberwar && cp target/*war /usr/local/tomcat/webapps/ROOT.war && rm -rf /tmp/* /root/.lein
+RUN lein deps && lein ring uberwar && cp target/*war /usr/local/tomcat/webapps/ROOT.war && rm -rf /tmp/* /root/.lein /root/.m2
 EXPOSE 8009
