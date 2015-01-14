@@ -73,5 +73,5 @@
       (println "Status:" (:status response))
       (doall (map print-header (:headers response)))
       (println "")
-      ; Should probably do (print do handle binaries - but we know it's all HTML and JSON)
-      (println (:body response))))))
+      ; Should probably do (print) instead of (println) in case :body is a binary - but we know it's all HTML and JSON)
+      (println (or (:body response) "")))))
