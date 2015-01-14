@@ -96,10 +96,57 @@ through [tomcat](https://registry.hub.docker.com/_/tomcat/).
 
     docker run -p 8080:8080 stain/scufl2-info
 
+# cgi-bin
+
+If you are old-skool and unable to run a Servlet application server, it is possible to create a 
+[cgi-bin](http://www.ietf.org/rfc/rfc3875)
+version, that although very slow (~ 4s response time), does not require any running processes or memory
+usage when the scufl2info service is not being accessed.
+
+Build as:
+
+    lein ring uberjar
+
+This produces a single jar in `target/scufl2-info-0.4.1-SNAPSHOT-standalone.jar`. You can test this as:
+
+    stain@biggie-utopic:~/src/scufl2-info$ PATH_INFO=/workflowBundle/2f0e94ef-b5c4-455d-aeab-1e9611f46b8b/ java -jar target/scufl2-info-0.4.1-SNAPSHOT-standalone.jar
+    Status: 200
+    Content-Type: application/json; charset=utf-8
+
+    {
+      "@context" : {
+        "@base" : "http://ns.taverna.org.uk/2010/workflowBundle/2f0e94ef-b5c4-455d-aeab-1e9611f46b8b/",
+        "@vocab" : "http://ns.taverna.org.uk/2010/scufl2#"
+      },
+      "@id" : "http://ns.taverna.org.uk/2010/workflowBundle/2f0e94ef-b5c4-455d-aeab-1e9611f46b8b/",
+      "@type" : "WorkflowBundle"
+    }
+
+See [RFC3875](http://www.ietf.org/rfc/rfc3875) for details about the cgi-bin environment variables.
+
+
+Now simply create a `scufl2info.cgi` script to execute `scufl2-info-0.4.1-SNAPSHOT-standalone.jar`:
+
+    #!/bin/sh
+    ## Small memory footprint!
+    java -Xmx32M -jar lib/scufl2-info-0.4.1-SNAPSHOT-standalone.jar 2>&1
+
+Remember to make the script executable with 
+
+    chmod 755 scufl2info.cgi
+
+Configuring your web server to run cgi-bin is out of scope for this document.
+
+You might want to pretend this is in a folder `/scufl2info/` using this `.htaccess`:
+
+    RewriteEngine On
+    RewriteRule (.*) /cgi-bin/scufl2info.cgi/$1
+
+Remember to add the final `/` as otherwise the relative links will be wrong.
 
 ## License
 
-Copyright © 2014 University of Manchester
+Copyright © 2014-2015 University of Manchester
 
 This software is licensed under the [MIT license](LICENSE.txt).
 
