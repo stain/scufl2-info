@@ -74,4 +74,4 @@
       (doall (map print-header (:headers response)))
       (println "")
       ; Should probably do (print) instead of (println) in case :body is a binary - but we know it's all HTML and JSON)
-      (println (or (:body response) "")))))
+      (println (or (:body response) ""))))))
